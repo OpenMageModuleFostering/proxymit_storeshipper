@@ -1,50 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
-	<modules>
-		<Proxymit_StoreShipper>
-			<version>1.0.1</version>
-		</Proxymit_StoreShipper>
-	</modules>
-	<frontend>
-		<routers>
-			<routeurfrontend>
-				<use>standard</use>
-				<args>
-					<module>Proxymit_StoreShipper</module>
-					<frontName>stores</frontName>
-				</args>
-			</routeurfrontend>
-		</routers>
-		<layout>
-			<updates>
-				<storeshipper>
-					<file>storeshipper.xml</file>
-				</storeshipper>
-			</updates>
-		</layout>
-	</frontend>
-	<global>
-		<models>
-			<storeshipper>
-				<class>Proxymit_StoreShipper_Model</class>
-				<resourceModel>storeshipper_mysql4</resourceModel>
-			</storeshipper>
-			<storeshipper_mysql4>
-				<class>Proxymit_StoreShipper_Model_Mysql4</class>
-				<entities>
-					<stores>
-						<table>storeshipper_store</table>
-					</stores>
-					<orders>
-						<table>storeshipper_order_store</table>
-					</orders>
-<!-- 					<schedule>
-						<table>storeshipper_schedule</table>
-					</schedule> -->
-				</entities>
-			</storeshipper_mysql4>
-		</models>
-		<resources>
+    <modules>
+        <Proxymit_StoreShipper>
+            <version>1.0.4</version>
+        </Proxymit_StoreShipper>
+    </modules>
+    <frontend>
+        <routers>
+            <routeurfrontend>
+                <use>standard</use>
+                <args>
+                    <module>Proxymit_StoreShipper</module>
+                    <frontName>stores</frontName>
+                </args>
+            </routeurfrontend>
+        </routers>
+        <layout>
+            <updates>
+                <storeshipper>
+                    <file>storeshipper.xml</file>
+                </storeshipper>
+            </updates>
+        </layout>
+        <translate>
+            <modules>
+                <Proxymit_StoreShipper>
+                    <files>
+                        <default>Proxymit_StoreShipper.csv</default>
+                    </files>
+                </Proxymit_StoreShipper>
+            </modules>
+        </translate>
+    </frontend>
+    <global>
+        <models>
+            <storeshipper>
+                <class>Proxymit_StoreShipper_Model</class>
+                <resourceModel>storeshipper_mysql4</resourceModel>
+            </storeshipper>
+            <storeshipper_mysql4>
+                <class>Proxymit_StoreShipper_Model_Mysql4</class>
+                <entities>
+                    <stores>
+                        <table>storeshipper_store</table>
+                    </stores>
+                    <orders>
+                        <table>storeshipper_order_store</table>
+                    </orders>
+                    <!-- 					<schedule>
+                                            <table>storeshipper_schedule</table>
+                                        </schedule> -->
+                </entities>
+            </storeshipper_mysql4>
+        </models>
+        <resources>
             <storeshipper_setup>
                 <setup>
                     <module>Proxymit_StoreShipper</module>
@@ -53,41 +62,41 @@
                     <use>core_setup</use>
                 </connection>
             </storeshipper_setup>
-			<storeshipper_write>
-				<connection>
-					<use>core_write</use>
-				</connection>
-			</storeshipper_write>
-			<!-- db read connection -->
-			<storeshipper_read>
-				<connection>
-					<use>core_read</use>
-				</connection>
-			</storeshipper_read>
-		</resources>
-		<blocks>
-			<storeshipper>
-				<class>Proxymit_StoreShipper_Block</class>
-			</storeshipper>
-			<adminhtml>
-				<rewrite>
-					<sales_order_view>Proxymit_StoreShipper_Block_Adminhtml_Sales_Order_View</sales_order_view>
-				</rewrite>
-			</adminhtml>
-			
-			<sales>
-				<rewrite>
-					<order_details>Proxymit_StoreShipper_Block_Sales_Order_Details</order_details>
-					<order_info>Proxymit_StoreShipper_Block_Sales_Order_Info</order_info>
-				</rewrite>
-			</sales>
-		</blocks>
-		<helpers>
-			<storeshipper>
-				<class>Proxymit_StoreShipper_Helper</class>
-			</storeshipper>
-		</helpers>
-		<template>
+            <storeshipper_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </storeshipper_write>
+            <!-- db read connection -->
+            <storeshipper_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </storeshipper_read>
+        </resources>
+        <blocks>
+            <storeshipper>
+                <class>Proxymit_StoreShipper_Block</class>
+            </storeshipper>
+            <adminhtml>
+                <rewrite>
+                    <sales_order_view>Proxymit_StoreShipper_Block_Adminhtml_Sales_Order_View</sales_order_view>
+                </rewrite>
+            </adminhtml>
+
+            <sales>
+                <rewrite>
+                    <order_details>Proxymit_StoreShipper_Block_Sales_Order_Details</order_details>
+                    <order_info>Proxymit_StoreShipper_Block_Sales_Order_Info</order_info>
+                </rewrite>
+            </sales>
+        </blocks>
+        <helpers>
+            <storeshipper>
+                <class>Proxymit_StoreShipper_Helper</class>
+            </storeshipper>
+        </helpers>
+        <template>
             <email>
                 <storeshipper_manager>
                     <label>StoreShipper Manager Notification</label>
@@ -101,32 +110,41 @@
                 </storeshipper_customer>
             </email>
         </template>
-	</global>
-	<admin>
-		<routers>
-			<storeshipper>
-				<use>admin</use>
-				<args>
-					<module>Proxymit_StoreShipper</module>
-					<frontName>storeshipper</frontName>
-				</args>
-			</storeshipper>
-			<adminhtml>
-            <args>
-                <modules>
-                    <storeshipper after="Mage_Adminhtml">Proxymit_StoreShipper</storeshipper>
-                </modules>
-            </args>
-        </adminhtml>
-		</routers>
-	</admin>
-	<adminhtml>
-		<layout>
-			<updates>
-				<storeshipper>
-					<file>storeshipper.xml</file>
-				</storeshipper>
-			</updates>
-		</layout>
-	</adminhtml>
+    </global>
+    <admin>
+        <routers>
+            <storeshipper>
+                <use>admin</use>
+                <args>
+                    <module>Proxymit_StoreShipper</module>
+                    <frontName>storeshipper</frontName>
+                </args>
+            </storeshipper>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <storeshipper after="Mage_Adminhtml">Proxymit_StoreShipper</storeshipper>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+    <adminhtml>
+        <layout>
+            <updates>
+                <storeshipper>
+                    <file>storeshipper.xml</file>
+                </storeshipper>
+            </updates>
+        </layout>
+        <translate>
+            <modules>
+                <Proxymit_StoreShipper>
+                    <files>
+                        <default>Proxymit_StoreShipper.csv</default>
+                    </files>
+                </Proxymit_StoreShipper>
+            </modules>
+        </translate>
+    </adminhtml>
 </config>

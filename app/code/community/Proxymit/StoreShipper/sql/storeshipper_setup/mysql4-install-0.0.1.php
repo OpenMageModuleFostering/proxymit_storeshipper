@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS {$this->getTable('storeshipper_store')} (
   `shipping_price` double DEFAULT '0',
   `adress` varchar(45) DEFAULT NULL,
   `city` varchar(45) DEFAULT NULL,
-  `zipcode` int(11) DEFAULT NULL,
+  `zipcode` VARCHAR (11) DEFAULT NULL,
   `country` varchar(45) DEFAULT NULL,
   `state` varchar(45) DEFAULT NULL,
   `latitude` double DEFAULT NULL,

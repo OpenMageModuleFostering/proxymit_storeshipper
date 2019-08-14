@@ -7,16 +7,16 @@
  */
 ?>
 <script type="text/javascript">
-/*function initialize() {
-    var mapOptions = {
-      center: new google.maps.LatLng(0,0),
-      zoom: 1,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-    map = new google.maps.Map(document.getElementById("map-canvas"),
-        mapOptions);
-}*/
-//google.maps.event.addDomListener(window, 'load', initialize);
+    /*function initialize() {
+     var mapOptions = {
+     center: new google.maps.LatLng(0,0),
+     zoom: 1,
+     mapTypeId: google.maps.MapTypeId.ROADMAP
+     };
+     map = new google.maps.Map(document.getElementById("map-canvas"),
+     mapOptions);
+     }*/
+    //google.maps.event.addDomListener(window, 'load', initialize);
 </script>
 <?php
 $_code = $this->getMethodCode ();
@@ -24,338 +24,348 @@ $carrier = $this->getMethodInstance ();
 $pickupData = $this->getQuote ()->getPickupData ();
 $_rate = $this->getRate ();
 if (! isset ( $pickupData ['id_store'] )) {
-	$pickupData ['id_store'] = '';
+    $pickupData ['id_store'] = '';
 }
 if (! isset ( $pickupData ['store'] )) {
-	$pickupData ['store'] = '';
+    $pickupData ['store'] = '';
 }
 if (! isset ( $pickupData ['pickup_date'] )) {
-	$pickupData ['pickup_date'] = '';
+    $pickupData ['pickup_date'] = '';
 }
 
 ?>
 <ul class="form-list" id="shipping_form_<?php echo $_rate->getCode() ?>"
-	style="display: none;">
-	<li><span class="input-box"> <select style="display:none;" class="required-entry"
-			name="shipping_pickup[id_store]" id="main_store_select">
-				<option value='-1'
-					<?php if($pickupData['id_store'] == ''){ echo "selected=selected";} ?>><?php echo $this->__('Select Store..');?></option>
-            <?php
-			$stores = $this->getAllStores ();
-			foreach ( $stores as $store ) {
-				?>
-				<option value='<?php echo $store["id"]; ?>'
-					<?php if($pickupData['id_store'] == $store["id"]){ echo "selected=selected";} ?>><?php echo $store["name"]; ?></option>
-				<?php } ?>
-		</select>
+    style="display: none;">
+    <li><span class="input-box"> <select style="display:none;" class="required-entry"
+                                         name="shipping_pickup[id_store]" id="main_store_select">
+                <option value='-1'
+                    <?php if($pickupData['id_store'] == ''){ echo "selected=selected";} ?>><?php echo $this->__('Select a store..');?></option>
+                <?php
+                $stores = $this->getAllStores ();
+                foreach ( $stores as $store ) {
+                    ?>
+                    <option value='<?php echo $store["id"]; ?>'
+                        <?php if($pickupData['id_store'] == $store["id"]){ echo "selected=selected";} ?>><?php echo $store["name"]; ?></option>
+                <?php } ?>
+            </select>
 	</span>
-	
-		<div class="col1-set">
-			<div class="col-1">
-				<br /><div id="map-canvas" style="height: 240px; width: 603px"></div>
-			</div>
-			<div align="center"><br />
-			<span><?php echo $this->__('Selected store :') ?></span>
-		<div style="color: red; font-size: 14px; font-weight: bold;" id="selected_store_text">None</div>
-		</div>
-			<div class="col2-set">
-				<div class="col-1">
-				<div class="fieldset">
 
-					<h2 class="legend">Search</h2>
-					<form name="search_form" id="search_form" action="ourstores_submit"
-						method="post" accept-charset="utf-8">
-						<ul class="form-list">
-							<li class="fields">
-								<div class="field">
-									<label for="country">Country</label>
-									<div class="input-box">
-									<?php $_countries = Mage::getResourceModel('directory/country_collection')
-                                    ->loadData()
-                                    ->toOptionArray(false) ?>
-										<?php if (count($_countries) > 0): ?>
-										    <select name="country" id="country" style="width: 130px;">
-										        <option value="">-- All Countries --</option>
-										        <?php foreach($_countries as $_country): ?>
-										            <option value="<?php echo $_country['value'] ?>">
-										                <?php echo $_country['label'] ?>
-										            </option>
-										        <?php endforeach; ?>
-										    </select>
-										<?php endif; ?>
-									</div>
-								</div>
-							</li>
-							<li class="fields">
-								<div class="field">
-									<label for="state">State / Province</label>
-									<div class="input-box">
-										<input name="state" id="state" />
-									</div>
-								</div>
-								<div class="field">
-									<label for="city">City</label>
-									<div class="input-box">
-										<input id="city" name="city" />
-									</div>
-								</div>
-								<div class="field">
-									<label for="zip">Zip Code</label>
-									<div class="input-box">
-										<input id="zip" name="zip" />
-									</div>
-								</div>
-							</li>
-						</ul>
-						<div class="buttons-set">
-							<button type="button" title="Valider" class="button"
-								onclick="window.stroreshipper.subm();">
-								<span><span>Search</span></span>
-							</button>
-						</div>
-					</form>
-				</div>
-				</div>
-				<div class="col-2">
-				<div id="stores" style="padding:0px; max-height: 300px; overflow: auto; border: 0px;" class="stores fieldset">
-<!-- 					<h2 class="legend">Stores list</h2> -->
-					<table class="data-table">
-						<tr>
-							<th>Store Name</th>
-							<th>City</th>
-							<th>Country</th>
-							<th></th>
-						</tr>
-        <?php
-								$stores = $this->getAllStores ();
-	$points = array ();
-	$titles = array ();
-	foreach ( $stores as $store ) {
-		$points [$store ["id"]] = $store ["latitude"] . ',' . $store ["longitude"] . ',"' . $store ["name"] . '"';
-									?>
-          <tr>
-							<td><a
-								href="javascript:stroreshipper.pointStore(<?php echo $store["latitude"].','.$store["longitude"].','.$store["id"];?>);"><?php echo $store["name"];?></a></td>
-							<td><?php echo $store["city"];?></td>
-							<td><?php echo Mage::helper ( 'storeshipper' )->getCountryName($store["country"]);?></td>
-							<td><a target="_new"
-								href="javascript:itiniraire('<?php echo $store["latitude"].", ".$store["longitude"];?>')"><img src="http://laviouze.free.fr/images/Map.png" width="30px" /></a></td>
-						</tr>
-          <?php
-								}
-								?>
-      </table>
-				</div>
-				</div>
-			</div>
-		</div> 
-	</li>
+        <div class="col1-set">
+            <div class="col-1">
+                <br /><div id="map-canvas" style="height: 240px; width: 603px"></div>
+            </div>
+            <div align="center"><br />
+                <span><?php echo $this->__('Selected store :') ?></span>
+                <div style="color: red; font-size: 14px; font-weight: bold;" id="selected_store_text"><?php echo $this->__("None") ?></div>
+            </div>
+            <div class="col2-set">
+                <div class="col-1">
+                    <div class="fieldset">
+
+                        <h2 class="legend"><?php echo $this->__("Search") ?></h2>
+                        <form name="search_form" id="search_form" action="ourstores_submit"
+                              method="post" accept-charset="utf-8">
+                            <ul class="form-list">
+                                <li class="fields">
+                                    <div class="field">
+                                        <label for="country"><?php echo $this->__("Country") ?></label>
+                                        <div class="input-box">
+                                            <?php $_countries = Mage::getResourceModel('directory/country_collection')
+                                                ->loadData()
+                                                ->toOptionArray(false) ?>
+                                            <?php if (count($_countries) > 0): ?>
+                                                <select name="country" id="country" style="width: 130px;">
+                                                    <option value="">-- <?php echo $this->__("All Countries") ?> --</option>
+                                                    <?php foreach($_countries as $_country): ?>
+                                                        <option value="<?php echo $_country['value'] ?>">
+                                                            <?php echo $_country['label'] ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="fields">
+                                    <div class="field">
+                                        <label for="state"><?php echo $this->__("State / Province") ?></label>
+                                        <div class="input-box">
+                                            <input name="state" id="state" />
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label for="city"><?php echo $this->__("City") ?></label>
+                                        <div class="input-box">
+                                            <input id="city" name="city" />
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label for="zip"><?php echo $this->__("Zip Code") ?></label>
+                                        <div class="input-box">
+                                            <input id="zip" name="zip" />
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                            <div class="buttons-set">
+                                <button type="button" title="Valider" class="button"
+                                        onclick="window.stroreshipper.subm();">
+                                    <span><span><?php echo $this->__("Search") ?></span></span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <div id="stores" style="padding:0px; max-height: 300px; overflow: auto; border: 0px;" class="stores fieldset">
+                        <!-- 					<h2 class="legend">Stores list</h2> -->
+                        <table class="data-table">
+                            <tr>
+                                <th><?php echo $this->__("Store Name") ?></th>
+                                <th><?php echo $this->__("City") ?></th>
+                                <th><?php echo $this->__("Country") ?></th>
+                                <th></th>
+                            </tr>
+                            <?php
+                            $stores = $this->getAllStores ();
+                            $points = array ();
+                            $titles = array ();
+                            foreach ( $stores as $store ) {
+                                $points [$store ["id"]] = $store ["latitude"] . ',' . $store ["longitude"] . ',"' . $store ["name"] . '"';
+                                ?>
+                                <tr>
+                                    <td><a
+                                            href="javascript:stroreshipper.pointStore(<?php echo $store["latitude"].','.$store["longitude"].','.$store["id"];?>);"><?php echo $store["name"];?></a></td>
+                                    <td><?php echo $store["city"];?></td>
+                                    <td><?php echo Mage::helper ( 'storeshipper' )->getCountryName($store["country"]);?></td>
+                                    <td><a target="_new"
+                                           href="javascript:itiniraire('<?php echo $store["latitude"].", ".$store["longitude"];?>')"><img src="http://laviouze.free.fr/images/Map.png" width="30px" /></a></td>
+                                </tr>
+                            <?php
+                            }
+                            ?>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
 </ul>
 <script type="text/javascript">
-window.stroreshipper = {};
-window.loadJsFile = function(filename){
-	var fileref=document.createElement('script');
-	fileref.setAttribute("type","text/javascript");
-	fileref.setAttribute("src", filename);
-	if (typeof fileref!="undefined")
-        document.getElementsByTagName("head")[0].appendChild(fileref);
-}
-window.initialize = function() {
-	setTimeout(function(){
-	window.stroreshipper.setAllMap(null);
-	markers = [];
-    var mapOptions = {
-      center: new google.maps.LatLng(0,0),
-      zoom: 1,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-    map = new google.maps.Map(document.getElementById("map-canvas"),
-        mapOptions);
-    window.stroreshipper.getLocation();
-    <?php
-  			function dirFiles($directry) {	
-  			$dir = dir ( $directry ); // Open Directory
-  				if ($dir != NULL) {
-  					while ( false !== ($file = $dir->read ()) ) 			// Reads Directory
-  					{
-  						$extension = substr ( $file, strrpos ( $file, '.' ) ); // Gets the File
-  						// Extension
-  						if ($extension == ".png" || $extension == ".jpg" || $extension == ".bmp" | $extension == ".gif" | $extension == ".jpeg") // Extensions
-  							// Allowed
-  							$filesall [$file] = $file; // Store in Array
-  					}
-  					$dir->close (); // Close Directory
-  					asort ( $filesall ); // Sorts the Array
-  					return $filesall;
-  				}
+    window.stroreshipper = {};
+    window.loadJsFile = function(filename){
+        var fileref=document.createElement('script');
+        fileref.setAttribute("type","text/javascript");
+        fileref.setAttribute("src", filename);
+        if (typeof fileref!="undefined")
+            document.getElementsByTagName("head")[0].appendChild(fileref);
+    }
+    window.initialize = function() {
+        setTimeout(function(){
+            window.stroreshipper.setAllMap(null);
+            markers = [];
+            var mapOptions = {
+                center: new google.maps.LatLng(0,0),
+                zoom: 1,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            map = new google.maps.Map(document.getElementById("map-canvas"),
+                mapOptions);
+            window.stroreshipper.getLocation();
+            <?php
+                      function dirFiles($directry) {
+                          try{
+                              $dir = dir ( $directry ); // Open Directory
+                            if ($dir != NULL) {
+                                while ( false !== ($file = $dir->read ()) ) 			// Reads Directory
+                                {
+                                    $extension = substr ( $file, strrpos ( $file, '.' ) ); // Gets the File
+                                    // Extension
+                                    if ($extension == ".png" || $extension == ".jpg" || $extension == ".bmp" | $extension == ".gif" | $extension == ".jpeg") // Extensions
+                                        // Allowed
+                                        $filesall [$file] = $file; // Store in Array
+                                }
+                                $dir->close (); // Close Directory
+                                asort ( $filesall ); // Sorts the Array
+                                return $filesall;
+                            }
+                          }catch (Exception $e){
 
-  			}
-  			function getImages($id_store){
-  				$html = 'new Array(';
-				$model_st= Mage::getModel ( 'storeshipper/stores' )->load($id_store);
-				$html.='"<p>'.$model_st->getDescription().'</p>",';
-  				$path = Mage::getBaseDir ( 'media' ) . DS . 'storeshipper' . DS .$id_store. DS;
-  				$array = dirFiles ( $path );
-  				if($array !=NULL){
-  				foreach ( $array as $key => $file ) {
-  					$p = Mage::getBaseUrl ( Mage_Core_Model_Store::URL_TYPE_MEDIA ) . 'storeshipper/' .$id_store. '/' . $file;
-  					$html .= '"<a target=\'_blank\' href=\'' . $p . '\'><img style=\'max-width: 150px;\' src=\'' . $p . '\' /></a>",';
-  				}
-  				}
-  				$html .= '"")';
-  				return $html;
-  			}
+                          }
+                          return array();
 
-  			foreach ( $points as $key => $p ) {
-  				echo 'window.stroreshipper.addMarker(' . $p . ','.getImages($key).');';
-  			}
-  			
-  			?>
-  			var mcOptions = {gridSize: 50, maxZoom: 15};
-  			mc = new window.MarkerClusterer(map,markers, mcOptions);
-	},2000);
-  }
- <?php $googleApiKey = Mage::getStoreConfig('carriers/pickup/google_api'); ?>
- <?php if($googleApiKey):?>
-	window.loadJsFile("http://maps.google.com/maps/api/js?callback=initialize&key=<?php echo $googleApiKey; ?>&sensor=true");
- <?php else: ?>
-	window.loadJsFile("http://maps.google.com/maps/api/js?callback=initialize&sensor=true");
- <?php endif; ?> 
-	window.loadJsFile("http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js");
+                      }
+                      function getImages($id_store){
+                        try{
+                            $html = 'new Array(';
+                            $model_st= Mage::getModel ( 'storeshipper/stores' )->load($id_store);
+                            $html.='"<p>'.$model_st->getDescription().'</p>",';
+                            $path = Mage::getBaseDir ( 'media' ) . DS . 'storeshipper' . DS .$id_store. DS;
+                            $array = dirFiles ( $path );
+                            if($array !=NULL){
+                            foreach ( $array as $key => $file ) {
+                                $p = Mage::getBaseUrl ( Mage_Core_Model_Store::URL_TYPE_MEDIA ) . 'storeshipper/' .$id_store. '/' . $file;
+                                $html .= '"<a target=\'_blank\' href=\'' . $p . '\'><img style=\'max-width: 150px;\' src=\'' . $p . '\' /></a>",';
+                            }
+                            }
+                            $html .= '"")';
+                            return $html;
+                        }catch(Exception $e){
+
+                        }
+                        return "";
+                      }
+
+                      foreach ( $points as $key => $p ) {
+                          echo 'window.stroreshipper.addMarker(' . $p . ','.getImages($key).');';
+                      }
+
+                      ?>
+            var mcOptions = {gridSize: 50, maxZoom: 15};
+            mc = new window.MarkerClusterer(map,markers, mcOptions);
+        },2000);
+    }
+    <?php $googleApiKey = Mage::getStoreConfig('carriers/pickup/google_api'); ?>
+    <?php if($googleApiKey):?>
+    window.loadJsFile("http://maps.google.com/maps/api/js?callback=initialize&key=<?php echo $googleApiKey; ?>&sensor=true");
+    <?php else: ?>
+    window.loadJsFile("http://maps.google.com/maps/api/js?callback=initialize&sensor=true");
+    <?php endif; ?>
+    window.loadJsFile("http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js");
 </script>
-	<script type="text/javascript">
-//var map = new google.maps.Map(document.getElementById("map-canvas"));
-var mc;
-window.stroreshipper.setAllMap = function(map) {
-	  for (var i = 0; i < markers.length; i++) {
-	    markers[i].setMap(map);
-	  }
-	}
-window.itiniraire = function(dest){
-	window.open("https://maps.google.com/maps?saddr="+myLocation.toString()+"&daddr=("+dest+")&hl=fr&ie=UTF8&sll=48.885953,2.242912&sspn=0.008113,0.01929&geocode=&oq=&t=h&mra=ls","blank");
-}
-window.stroreshipper.showPosition = function(position) {
-	  var lat = position.coords.latitude;
-	  var lng = position.coords.longitude;
-	  myLocation = new google.maps.LatLng(lat, lng);
-	  //map.setCenter(new google.maps.LatLng(lat, lng));
-	  var marker = new google.maps.Marker({
-  		position: new google.maps.LatLng(lat, lng),
-  		map: map,
-  		icon: 'http://www.robotwoods.com/dev/misc/bluecircle.png',
-  		title: "Your current position"
-  	});
-	}
-window.stroreshipper.getLocation = function() {
-	  if (navigator.geolocation) {
-	    navigator.geolocation.getCurrentPosition(window.stroreshipper.showPosition);
-	  } else {
-	    alert("Geolocation is not supported by this browser.");
-	  }
-	}
+<script type="text/javascript">
+    //var map = new google.maps.Map(document.getElementById("map-canvas"));
+    var mc;
+    window.stroreshipper.setAllMap = function(map) {
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(map);
+        }
+    }
+    window.itiniraire = function(dest){
+        window.open("https://maps.google.com/maps?saddr="+myLocation.toString()+"&daddr=("+dest+")&hl=fr&ie=UTF8&sll=48.885953,2.242912&sspn=0.008113,0.01929&geocode=&oq=&t=h&mra=ls","blank");
+    }
+    window.stroreshipper.showPosition = function(position) {
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+        myLocation = new google.maps.LatLng(lat, lng);
+        //map.setCenter(new google.maps.LatLng(lat, lng));
+        var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(lat, lng),
+            map: map,
+            icon: 'http://www.robotwoods.com/dev/misc/bluecircle.png',
+            title: "Your current position"
+        });
+    }
+    window.stroreshipper.getLocation = function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(window.stroreshipper.showPosition);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
 
-      var markers = [];
-      //google.maps.event.addDomListener(window, 'load', initialize);
+    var markers = [];
+    //google.maps.event.addDomListener(window, 'load', initialize);
 
-window.stroreshipper.pointStore = function(lat, long){
-      	map.panTo(new google.maps.LatLng(lat, long));
-      	map.setZoom(15);
-      	
-      }
-window.stroreshipper.addMarker = function(lat, long, name, images){
-    	  var marker = new google.maps.Marker({
-      		position: new google.maps.LatLng(lat, long),
-      		map: map,
-      		title: name
-      	});
-          var contentString = '<div id="content">'+
-          '<div id="siteNotice">'+
-          '</div>'+
-          '<h1 id="firstHeading" class="firstHeading">'+name+'</h1>'+
-          '<div id="bodyContent">'+
-          '<p>';
-          var i=0;
-			for(i=0;i<images.length;i++){
-				contentString+=images[i];
-			}
-          //contentString += '<table><tr><td><img src="http://127.0.0.1/magento1/skin/adminhtml/default/default/images/logo.gif" /></td><td><img src="http://127.0.0.1/magento1/skin/frontend/default/default/images/logo.gif" /></td></tr></table>';
-          contentString += '</p>'+
-          '</div>'+
-          '</div>';
-        	  markers.push(marker);
-        	
-       
-          var infowindow = new google.maps.InfoWindow({
-              content: contentString
-          });
-      
-    	  google.maps.event.addListener(marker, 'click', function() {
-  		    infowindow.open(map,marker);
-  		  });
-      }
+    window.stroreshipper.pointStore = function(lat, long){
+        map.panTo(new google.maps.LatLng(lat, long));
+        map.setZoom(15);
 
-      
-    </script>
-		
-		
-		<script type="text/javascript">
-window.stroreshipper.subm = function(){
-window.stroreshipper.showLoading();
-new Ajax.Request(
-		'<?php echo Mage::getBaseUrl(); ?>/stores/index/getStores/',
-		{
-			method: 'post',
-			form: 'search_form',
-			parameters: {search:"2", zip:$("zip").getValue(), state:$("state").getValue(), country:$("country").getValue(), city:$("city").getValue() },
-			onSuccess: window.stroreshipper.successIt,
-			onFailure: function() { console.log('Connection Error !'); }
-		}
-	);
-}
-window.stroreshipper.successIt = function(response) { 
-	var content = response.responseText;
-    var container = $("stores");
-    container.update(content);
-    container.update($("search-result"));
-	//alert('done');
-}
-window.stroreshipper.showLoading = function(){
-	$("stores").update("");
-	var cl = new CanvasLoader('stores');
-	cl.setDiameter(30); // default is 40
-	cl.setDensity(80); // default is 40
-	cl.setRange(0.7); // default is 1.3
-	cl.show(); // Hidden by default
-}
+    }
+    window.stroreshipper.addMarker = function(lat, long, name, images){
+        var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(lat, long),
+            map: map,
+            title: name
+        });
+        var contentString = '<div id="content">'+
+            '<div id="siteNotice">'+
+            '</div>'+
+            '<h1 id="firstHeading" class="firstHeading">'+name+'</h1>'+
+            '<div id="bodyContent">'+
+            '<p>';
+        var i=0;
+        for(i=0;i<images.length;i++){
+            contentString+=images[i];
+        }
+        //contentString += '<table><tr><td><img src="http://127.0.0.1/magento1/skin/adminhtml/default/default/images/logo.gif" /></td><td><img src="http://127.0.0.1/magento1/skin/frontend/default/default/images/logo.gif" /></td></tr></table>';
+        contentString += '</p>'+
+        '</div>'+
+        '</div>';
+        markers.push(marker);
 
-//var map ;
 
-    Event.observe(window, 'load', function() {  
-   	 
+        var infowindow = new google.maps.InfoWindow({
+            content: contentString
+        });
+
+        google.maps.event.addListener(marker, 'click', function() {
+            infowindow.open(map,marker);
+        });
+    }
+
+
+</script>
+
+
+<script type="text/javascript">
+    window.stroreshipper.subm = function(){
+        window.stroreshipper.showLoading();
+        new Ajax.Request(
+            '<?php echo Mage::getBaseUrl(); ?>/stores/index/getStores/',
+            {
+                method: 'post',
+                form: 'search_form',
+                parameters: {search:"2", zip:$("zip").getValue(), state:$("state").getValue(), country:$("country").getValue(), city:$("city").getValue() },
+                onSuccess: window.stroreshipper.successIt,
+                onFailure: function() { console.log('Connection Error !'); }
+            }
+        );
+    }
+    window.stroreshipper.successIt = function(response) {
+        var content = response.responseText;
+        var container = $("stores");
+        container.update(content);
+        container.update($("search-result"));
+        //alert('done');
+    }
+    window.stroreshipper.showLoading = function(){
+        $("stores").update("");
+        var cl = new CanvasLoader('stores');
+        cl.setDiameter(30); // default is 40
+        cl.setDensity(80); // default is 40
+        cl.setRange(0.7); // default is 1.3
+        cl.show(); // Hidden by default
+    }
+
+    //var map ;
+
+    Event.observe(window, 'load', function() {
+
         //map = new google.maps.Map(document.getElementById("map-canvas"));
         //google.maps.event.addDomListener(window, 'load', initialize);
-    	});
+    });
 
-window.stroreshipper.selectStore = function(val) {
+    window.stroreshipper.selectStore = function(val) {
         var sel = document.getElementById('main_store_select');
         for(var i = 0, j = sel.options.length; i < j; ++i) {
             if(sel.options[i].text == val) {
-               sel.selectedIndex = i;
+                sel.selectedIndex = i;
             }
         }
     }
-      
 
-window.stroreshipper.pointStore = function(lat, long, st){
-		map.panTo(new google.maps.LatLng(lat, long));
-		map.setZoom(15);
-		var sel = document.getElementById('main_store_select');
+
+    window.stroreshipper.pointStore = function(lat, long, st){
+        map.panTo(new google.maps.LatLng(lat, long));
+        map.setZoom(15);
+        var sel = document.getElementById('main_store_select');
         for(var i = 0, j = sel.options.length; i < j; ++i) {
             if(sel.options[i].value == st) {
-               sel.selectedIndex = i;
-               document.getElementById('selected_store_text').innerHTML="&nbsp;&nbsp;<b><font style='color:red;'>" +sel.options[i].innerHTML +" </font></b>";
+                sel.selectedIndex = i;
+                document.getElementById('selected_store_text').innerHTML="&nbsp;&nbsp;<b><font style='color:red;'>" +sel.options[i].innerHTML +" </font></b>";
             }
         }
-      }
+    }
 
-    </script>
+</script>
