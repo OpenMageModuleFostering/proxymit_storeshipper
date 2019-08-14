@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<menu>
+
+		<storeshipper translate="title" module="storeshipper">
+			<title>StoreShipper</title>
+			<sort_order>100</sort_order>
+			<children>
+				<stores>
+					<title>Manage Stores</title>
+					<action>storeshipper/adminhtml_index</action>
+				</stores>
+			</children>
+		</storeshipper>
+	</menu>
+
+	<acl>
+		<resources>
+			<admin>
+				<children>
+					<storeshipper translate="title" module="storeshipper">
+						<title>StoreShipper</title>
+						<sort_order>100</sort_order>
+						<children>
+							<stores>
+								<title>Manage Stores</title>
+								<action>storeshipper/adminhtml_index</action>
+							</stores>
+						</children>
+					</storeshipper>
+				</children>
+			</admin>
+		</resources>
+	</acl>
+</config>

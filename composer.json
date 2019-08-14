@@ -1,0 +1,16 @@
+{
+    "name": "OpenMageModuleFostering/Proxymit_StoreShipper",
+    "type": "magento-module",
+    "license": "GNU-General-Public-License-(GPL)",
+    "homepage": "",
+    "description": "Store Shipper is a delivery extension that allows customers to receive their products in the nearest store when choosing a delivery method in the checkout page.",
+    "authors": [
+    {
+        "name": "Proxym Group",
+        "email": "magento@proxym-group.com"
+    }
+],
+    "suggest": {
+        "magento-hackathon/magento-composer-installer": "*"
+    }
+}
