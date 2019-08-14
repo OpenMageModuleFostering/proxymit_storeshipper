@@ -29,7 +29,7 @@
 	</default>
 	<routeurfrontend_index_index>
 		<reference name="content">
-			<block type="storeshipper/ourstores" name="ourstores"
+			<block type="storeshipper/ourStores" name="ourstores"
 				template="storeshipper/ourstores.phtml" />
 			</reference>
 		</routeurfrontend_index_index>

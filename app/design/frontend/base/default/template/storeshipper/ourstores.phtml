@@ -240,36 +240,39 @@ google.maps.event.addDomListener(window, 'load', function(){
 	
 <?php
 	function dirFiles($directry) {	
-	$dir = dir ( $directry ); // Open Directory
-		if ($dir != NULL) {
-			while ( false !== ($file = $dir->read ()) ) 			// Reads Directory
-			{
-				$extension = substr ( $file, strrpos ( $file, '.' ) ); // Gets the File
-				// Extension
-				if ($extension == ".png" || $extension == ".jpg" || $extension == ".bmp" | $extension == ".gif" | $extension == ".jpeg") // Extensions
-					// Allowed
-					$filesall [$file] = $file; // Store in Array
+		try{	
+			$dir = dir ( $directry ); // Open Directory
+			if ($dir != NULL) {
+				while ( false !== ($file = $dir->read ()) ) 			// Reads Directory
+				{
+					$extension = substr ( $file, strrpos ( $file, '.' ) ); // Gets the File
+					// Extension
+					if ($extension == ".png" || $extension == ".jpg" || $extension == ".bmp" | $extension == ".gif" | $extension == ".jpeg") // Extensions
+						// Allowed
+						$filesall [$file] = $file; // Store in Array
+				}
+				$dir->close (); // Close Directory
+				asort ( $filesall ); // Sorts the Array
+				return $filesall;
 			}
-			$dir->close (); // Close Directory
-			asort ( $filesall ); // Sorts the Array
-			return $filesall;
-		}
-
+		}catch(Exception $e){}
 	}
 	function getImages($id_store){
-		$html = 'new Array(';
-		$model_st= Mage::getModel ( 'storeshipper/stores' )->load($id_store);
-		$html.='"<p>'.$model_st->getDescription().'</p>",';
-		$path = Mage::getBaseDir ( 'media' ) . DS . 'storeshipper' . DS .$id_store. DS;
-		$array = dirFiles ( $path );
-		if($array !=NULL){
-		foreach ( $array as $key => $file ) {
-			$p = Mage::getBaseUrl ( Mage_Core_Model_Store::URL_TYPE_MEDIA ) . 'storeshipper/' .$id_store. '/' . $file;
-			$html .= '"<a target=\'_blank\' href=\'' . $p . '\'><img style=\'max-width: 150px;\' src=\'' . $p . '\' /></a>",';
-		}
-		}
-		$html .= '"")';
-		return $html;
+		try{
+			$html = 'new Array(';
+			$model_st= Mage::getModel ( 'storeshipper/stores' )->load($id_store);
+			$html.='"<p>'.$model_st->getDescription().'</p>",';
+			$path = Mage::getBaseDir ( 'media' ) . DS . 'storeshipper' . DS .$id_store. DS;
+			$array = dirFiles ( $path );
+			if($array !=NULL){
+			foreach ( $array as $key => $file ) {
+				$p = Mage::getBaseUrl ( Mage_Core_Model_Store::URL_TYPE_MEDIA ) . 'storeshipper/' .$id_store. '/' . $file;
+				$html .= '"<a target=\'_blank\' href=\'' . $p . '\'><img style=\'max-width: 150px;\' src=\'' . $p . '\' /></a>",';
+			}
+			}
+			$html .= '"")';
+			return $html;
+		}catch(Exception $e){return '<div></div>';}
 	}
 
 	foreach ( $points as $key => $p ) {
