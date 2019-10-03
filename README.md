@@ -1,3 +1,5 @@
+
+
 ## Original Package Description
 
 Store Shipper is a delivery extension that allows customers to receive their products in the nearest store when choosing a delivery method in the checkout page.
